@@ -6,7 +6,7 @@ const setupPlayer = async () => {
 		maxCacheSize: 1024 * 10,
 	})
 
-	await TrackPlayer.setVolume(0.03), await TrackPlayer.setRepeatMode(RepeatMode.Queue)
+	await TrackPlayer.setVolume(0.5), await TrackPlayer.setRepeatMode(RepeatMode.Queue)
 }
 
 export const useSetupTrackPlayer = ({ onLoad }: { onLoad?: () => void }) => {
