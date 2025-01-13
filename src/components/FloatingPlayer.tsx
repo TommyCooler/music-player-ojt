@@ -1,21 +1,22 @@
 import { unknownTrackImageUri } from '@/constants/images'
+import { useLastActiveTrack } from '@/hooks/useLastActiveTrack'
 import { defaultStyles } from '@/styles'
-import { StyleSheet, Text, TouchableOpacity, View, ViewProps } from 'react-native'
+import { StyleSheet, TouchableOpacity, View, ViewProps } from 'react-native'
 import FastImage from 'react-native-fast-image'
-import { Track, useActiveTrack } from 'react-native-track-player'
+import { useActiveTrack } from 'react-native-track-player'
+import { MovingText } from './MovingText'
 import { PlayPauseButton, SkipToNextButton } from './PlayerControls'
 
 export const FloatingPlayer = ({ style }: ViewProps) => {
 	const activeTrack = useActiveTrack()
+	const lastActiveTrack = useLastActiveTrack()
 
-	if (!activeTrack) return null
+	const displayedTrack = activeTrack ?? lastActiveTrack
 
-	const displayedTrack: Track = activeTrack ?? {
-		title: 'This is just a song',
-	}
+	if (!displayedTrack) return null
 
 	return (
-		<TouchableOpacity>
+		<TouchableOpacity activeOpacity={0.9} style={[styles.container, style]}>
 			<FastImage
 				source={{
 					uri: displayedTrack.artwork ?? unknownTrackImageUri,
@@ -23,7 +24,11 @@ export const FloatingPlayer = ({ style }: ViewProps) => {
 				style={styles.trackArtworkImage}
 			/>
 			<View style={styles.trackTitleContainer}>
-				<Text style={styles.trackTitle}>{displayedTrack.title}</Text>
+				<MovingText
+					style={styles.trackTitle}
+					text={displayedTrack.title ?? ''}
+					animationThreshold={20}
+				/>
 			</View>
 			<View style={styles.trackControlsContainer}>
 				<PlayPauseButton iconSize={24} />
@@ -34,6 +39,15 @@ export const FloatingPlayer = ({ style }: ViewProps) => {
 }
 
 const styles = StyleSheet.create({
+	container: {
+		flexDirection: 'row',
+		alignItems: 'center',
+		backgroundColor: '#252525',
+		padding: 8,
+		borderRadius: 12,
+		paddingVertical: 10,
+	},
+
 	trackArtworkImage: {
 		width: 40,
 		height: 40,
